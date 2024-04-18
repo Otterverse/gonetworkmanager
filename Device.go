@@ -371,9 +371,10 @@ func (d *device) marshalMap() (map[string]interface{}, error) {
 }
 
 type DeviceStateChange struct {
-	Path   dbus.ObjectPath
-	State  NmDeviceState
-	Reason NmDeviceStateReason
+	Path     dbus.ObjectPath
+	NewState NmDeviceState
+	OldState NmDeviceState
+	Reason   NmDeviceStateReason
 }
 
 func (d *device) SubscribeState(receiver chan DeviceStateChange, exit chan struct{}) (err error) {
@@ -405,9 +406,10 @@ func (d *device) SubscribeState(receiver chan DeviceStateChange, exit chan struc
 				}
 
 				stateChange := DeviceStateChange{
-					Path:   signal.Path,
-					State:  NmDeviceState(signal.Body[0].(uint32)),
-					Reason: NmDeviceStateReason(signal.Body[1].(uint32)),
+					Path:     signal.Path,
+					NewState: NmDeviceState(signal.Body[0].(uint32)),
+					OldState: NmDeviceState(signal.Body[1].(uint32)),
+					Reason:   NmDeviceStateReason(signal.Body[2].(uint32)),
 				}
 
 				receiver <- stateChange
