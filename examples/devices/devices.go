@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/Wifx/gonetworkmanager/v2"
+	"github.com/Otterverse/gonetworkmanager/v2"
 	"os"
 )
 
