@@ -291,3 +291,12 @@ const (
 	NmRollbackResultErrDeviceUnmanaged NmRollbackResult = 2 // the device is now unmanaged.
 	NmRollbackResultErrFailed          NmRollbackResult = 3 // other errors during rollback.
 )
+
+//go:generate stringer -type=NmRadioFlags
+type NmRadioFlags uint32
+
+const (
+	NmRadioFlagsNone          NmRadioFlags = 0x0
+	NmRadioFlagsWlanAvailable NmRadioFlags = 0x1
+	NmRadioFlagsWwanAvailable NmRadioFlags = 0x2
+)

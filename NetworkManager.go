@@ -42,6 +42,7 @@ const (
 	NetworkManagerPropertyWwanHardwareEnabled        = NetworkManagerInterface + ".WwanHardwareEnabled"        // readable   b
 	NetworkManagerPropertyWimaxEnabled               = NetworkManagerInterface + ".WimaxEnabled"               // readwrite  b
 	NetworkManagerPropertyWimaxHardwareEnabled       = NetworkManagerInterface + ".WimaxHardwareEnabled"       // readable   b
+	NetworkManagerPropertyRadioFlags                 = NetworkManagerInterface + ".RadioFlags"                 // readable   u
 	NetworkManagerPropertyActiveConnections          = NetworkManagerInterface + ".ActiveConnections"          // readable   ao
 	NetworkManagerPropertyPrimaryConnection          = NetworkManagerInterface + ".PrimaryConnection"          // readable   o
 	NetworkManagerPropertyPrimaryConnectionType      = NetworkManagerInterface + ".PrimaryConnectionType"      // readable   s
@@ -167,6 +168,9 @@ type NetworkManager interface {
 
 	// GetPropertyWimaxHardwareEnabled Indicates if the WiMAX hardware is currently enabled, i.e. the state of the RF kill switch.
 	GetPropertyWimaxHardwareEnabled() (bool, error)
+
+	// GetPropertyRadioFlags indicates what radio (wifi or wwan) hardware is present.
+	GetPropertyRadioFlags() (NmRadioFlags, error)
 
 	// GetPropertyActiveConnections List of active connection object paths.
 	GetPropertyActiveConnections() ([]ActiveConnection, error)
@@ -523,6 +527,11 @@ func (nm *networkManager) GetPropertyWimaxEnabled() (bool, error) {
 
 func (nm *networkManager) GetPropertyWimaxHardwareEnabled() (bool, error) {
 	return nm.getBoolProperty(NetworkManagerPropertyWimaxHardwareEnabled)
+}
+
+func (nm *networkManager) GetPropertyRadioFlags() (NmRadioFlags, error) {
+	flags, err := nm.getUint32Property(NetworkManagerPropertyRadioFlags)
+	return NmRadioFlags(flags), err
 }
 
 func (nm *networkManager) GetPropertyActiveConnections() ([]ActiveConnection, error) {
