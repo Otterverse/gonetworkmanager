@@ -271,6 +271,19 @@ func (d *dbusBase) getSliceByteProperty(iface string) (value []byte, err error) 
 	return
 }
 
+func (d *dbusBase) getSliceStructProperty(iface string) (value []interface{}, err error) {
+	prop, err := d.getProperty(iface)
+	if err != nil {
+		return
+	}
+	value, ok := prop.([]interface{})
+	if !ok {
+		err = makeErrVariantType(iface)
+		return
+	}
+	return
+}
+
 func makeErrVariantType(iface string) error {
 	return fmt.Errorf("unexpected variant type for '%s'", iface)
 }

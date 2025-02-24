@@ -112,6 +112,9 @@ type Device interface {
 	// GetPropertyState The current state of the device.
 	GetPropertyState() (NmDeviceState, error)
 
+	// GetPropertyStateReason The state of the device and the reason for the current state.
+	GetPropertyStateReason() (NmDeviceState, NmDeviceStateReason, error)
+
 	// GetPropertyActiveConnection Object path of an ActiveConnection object that "owns" this device during activation. The ActiveConnection object tracks the life-cycle of a connection to a specific network and implements the org.freedesktop.NetworkManager.Connection.Active D-Bus interface.
 	GetPropertyActiveConnection() (ActiveConnection, error)
 
@@ -219,6 +222,25 @@ func (d *device) GetPropertyState() (NmDeviceState, error) {
 		return NmDeviceStateFailed, err
 	}
 	return NmDeviceState(r), nil
+}
+
+func (d *device) GetPropertyStateReason() (NmDeviceState, NmDeviceStateReason, error) {
+	r, err := d.getSliceStructProperty(DevicePropertyStateReason)
+	if err != nil {
+		return NmDeviceStateFailed, NmDeviceStateReasonUnknown, err
+	}
+	if len(r) != 2 {
+		return NmDeviceStateFailed, NmDeviceStateReasonUnknown, fmt.Errorf("unexpected length for StateReason, got '%d', expected '2'", len(r))
+	}
+	val1, ok := r[0].(uint32)
+	if !ok {
+		return NmDeviceStateFailed, NmDeviceStateReasonUnknown, fmt.Errorf("unexpected type for StateReason, got '%#v'", r)
+	}
+	val2, ok := r[1].(uint32)
+	if !ok {
+		return NmDeviceStateFailed, NmDeviceStateReasonUnknown, fmt.Errorf("unexpected type for StateReason, got '%#v'", r)
+	}
+	return NmDeviceState(val1), NmDeviceStateReason(val2), nil
 }
 
 func (d *device) GetPropertyActiveConnection() (ActiveConnection, error) {
